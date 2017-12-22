@@ -2,7 +2,9 @@ package net.ulich.eventsourcing.core
 
 import net.ulich.eventsourcing.api.dto.CancelPolicyRequest
 import net.ulich.eventsourcing.api.dto.CreatePolicyRequest
+import net.ulich.eventsourcing.api.dto.PolicyMtaRequest
 import net.ulich.eventsourcing.core.domain.Policy
+import net.ulich.eventsourcing.core.domain.PolicyState
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import spock.lang.Specification
@@ -11,7 +13,7 @@ import spock.lang.Subject
 import java.time.LocalDate
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class SpockPolicyServiceIT extends Specification {
+class PolicyServiceIT extends Specification {
 
 
     @Autowired
@@ -61,7 +63,7 @@ class SpockPolicyServiceIT extends Specification {
 
         and:
         LocalDate expectedCancelDate = LocalDate.now().plusMonths(1l)
-        CancelPolicyRequest cancelPolicyRequest = new CancelPolicyRequest(expectedCancelDate)
+        CancelPolicyRequest cancelPolicyRequest = defaultCancelRequest(expectedCancelDate)
 
         when:
         Policy cancelledPolicy = sut.cancelPolicy(policy.getId(), cancelPolicyRequest)
@@ -72,8 +74,56 @@ class SpockPolicyServiceIT extends Specification {
     }
 
 
+    void 'get policy loads the policy for a given version with the correct state'() {
+
+        given: 'version 1 is the creation'
+        Policy policy = sut.createPolicy(defaultCreatePolicyRequest())
+
+        and: 'version 2 is the modification'
+        sut.modifyPolicy(policy.id, defaultModifyPolicyRequest())
+
+        and: 'version 3 is the cancellation'
+        sut.cancelPolicy(policy.id, defaultCancelRequest())
+
+        when:
+        Policy receivedPolicy = sut.getPolicy(policy.id, 2)
+
+        then:
+        receivedPolicy.state == PolicyState.ACTIVE
+
+    }
+
+
+    void 'get policy loads the latest policy when no version is given'() {
+
+        given: 'version 1 is the creation'
+        Policy policy = sut.createPolicy(defaultCreatePolicyRequest())
+
+        and: 'version 2 is the modification'
+        sut.modifyPolicy(policy.id, defaultModifyPolicyRequest())
+
+        and: 'version 3 is the cancellation'
+        Policy cancelledPolicy = sut.cancelPolicy(policy.id, defaultCancelRequest())
+
+        when:
+        Policy receivedPolicy = sut.getPolicy(policy.id)
+
+        then:
+        receivedPolicy.state == cancelledPolicy.state
+
+    }
+
+
     private CreatePolicyRequest defaultCreatePolicyRequest() {
         new CreatePolicyRequest(expectedCoverStartDate, expectedApartmentSize)
     }
+    private PolicyMtaRequest defaultModifyPolicyRequest() {
+        new PolicyMtaRequest(150)
+    }
+
+    private CancelPolicyRequest defaultCancelRequest(LocalDate expectedCancelDate = null) {
+        new CancelPolicyRequest(expectedCancelDate ?: LocalDate.now())
+    }
+
 
 }

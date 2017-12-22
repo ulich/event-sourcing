@@ -25,7 +25,7 @@ public class PolicyService {
         String id = idGenerator.generateId().toString();
 
         PolicyCreatedEvent event = new PolicyCreatedEvent(id, createRequest);
-        Policy policy = apply(id, event);
+        Policy policy = applyEvent(id, event);
 
         // now it is safe to do any kind of things that modify other systems.
         // e.g. send an event to a message broker that the policy was created
@@ -44,9 +44,13 @@ public class PolicyService {
         return new Policy(events);
     }
 
+    public Policy getPolicy(String id) {
+        return getPolicy(id, null);
+    }
+
     public Policy modifyPolicy(String id, PolicyMtaRequest mtaRequest) {
         PolicyModifiedEvent event = new PolicyModifiedEvent(id, mtaRequest);
-        Policy policy = apply(id, event);
+        Policy policy = applyEvent(id, event);
 
         // now it is safe to do any kind of things that modify other systems.
         // e.g. send an event to a message broker that the policy was modified
@@ -56,7 +60,7 @@ public class PolicyService {
 
     public Policy cancelPolicy(String id, CancelPolicyRequest cancelRequest) {
         PolicyCanceledEvent event = new PolicyCanceledEvent(id, cancelRequest);
-        Policy policy = apply(id, event);
+        Policy policy = applyEvent(id, event);
 
         // now it is safe to do any kind of things that modify other systems.
         // e.g. send an event to a message broker that the policy was canceled
@@ -64,11 +68,11 @@ public class PolicyService {
         return policy;
     }
 
-    private Policy apply(String id, PolicyEvent event) {
+    private Policy applyEvent(String id, PolicyEvent event) {
         List<PolicyEvent> events = eventRepository.getByPolicyId(id);
         Policy policy = new Policy(events);
 
-        policy.apply(event);
+        policy.applyEvent(event);
 
         eventRepository.add(event);
         return policy;
