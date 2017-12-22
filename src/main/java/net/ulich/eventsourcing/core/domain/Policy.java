@@ -50,6 +50,7 @@ public class Policy {
         id = event.getPolicyId();
         state = PolicyState.ACTIVE;
         coverStartDate = event.getCoverStartDate();
+        coverEndDate = event.getCoverStartDate().plusYears(1l);
         apartmentSize = event.getApartmentSize();
     }
 
