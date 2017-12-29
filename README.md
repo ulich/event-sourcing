@@ -12,6 +12,16 @@ had been implemented in the [Policy](src/main/java/net/ulich/eventsourcing/core/
 logic is located (which would make most sense), other systems would have been notified every time the events are replayed.
 Therefore the notification should be put into the service methods.
 
+## start locally
+
+To start the application, first start the dynamo db docker container:
+
+```
+docker run -it --rm -p 8000:8000 cnadiminti/dynamodb-local:latest
+```
+
+Then you can start the app through the IDE or via the corresponding gradle task.
+
 
 ## Create policy
 ```
@@ -21,19 +31,19 @@ Take note of the id in the response and provide it in the other requests.
 
 ## Modify policy
 ```
-curl -XPUT -d '{"apartmentSize": 100}' -H"Content-Type:application/json" localhost:8080/policies/2dde682f-6958-4f0e-9e01-aadf5e7f4ab5
+curl -XPUT -d '{"apartmentSize": 100}' -H"Content-Type:application/json" localhost:8080/policies/{policyId}
 ```
 
 ## Cancel policy
 ```
-curl -XPOST -d '{"coverEndDate": "2018-06-01"}' -H"Content-Type:application/json" localhost:8080/policies/2dde682f-6958-4f0e-9e01-aadf5e7f4ab5/cancellation
+curl -XPOST -d '{"coverEndDate": "2018-06-01"}' -H"Content-Type:application/json" localhost:8080/policies/{policyId}/cancellation
 ```
 
 ## GetPolicy
 
 latest:
 ```
-curl 'localhost:8080/policies/2dde682f-6958-4f0e-9e01-aadf5e7f4ab5'
+curl 'localhost:8080/policies/{policyId}'
 ```
 
 specific version:

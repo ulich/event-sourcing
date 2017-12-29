@@ -5,20 +5,22 @@ import net.ulich.eventsourcing.api.dto.CreatePolicyRequest
 import net.ulich.eventsourcing.api.dto.PolicyMtaRequest
 import net.ulich.eventsourcing.core.domain.Policy
 import net.ulich.eventsourcing.core.domain.PolicyState
+import net.ulich.eventsourcing.core.persistence.PolicyEventRepositoryBean
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.context.SpringBootTest
-import spock.lang.Specification
 import spock.lang.Subject
 
 import java.time.LocalDate
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class PolicyServiceIT extends Specification {
+class PolicyServiceIntegrationSpec extends DynamoDbIntegrationSpec {
 
+    @Autowired
+    @Subject PolicyEventRepositoryBean policyEventRepository
 
     @Autowired
     @Subject
     PolicyService sut
+
+
     private int expectedApartmentSize
     private LocalDate expectedCoverStartDate
 

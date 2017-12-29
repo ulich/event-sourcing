@@ -1,11 +1,12 @@
 package net.ulich.eventsourcing.api;
 
+import lombok.AllArgsConstructor;
 import net.ulich.eventsourcing.api.dto.CancelPolicyRequest;
 import net.ulich.eventsourcing.api.dto.CreatePolicyRequest;
 import net.ulich.eventsourcing.api.dto.PolicyMtaRequest;
-import net.ulich.eventsourcing.core.domain.Policy;
 import net.ulich.eventsourcing.core.PolicyService;
-import lombok.AllArgsConstructor;
+import net.ulich.eventsourcing.core.PolicyServiceBean;
+import net.ulich.eventsourcing.core.domain.Policy;
 import org.springframework.web.bind.annotation.*;
 
 @AllArgsConstructor

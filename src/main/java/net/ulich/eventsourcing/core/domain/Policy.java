@@ -1,9 +1,9 @@
 package net.ulich.eventsourcing.core.domain;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.Getter;
 import lombok.Setter;
 import net.ulich.eventsourcing.core.event.PolicyEvent;
-import lombok.Getter;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -35,4 +35,8 @@ public class Policy {
         event.applyTo(this);
     }
 
+
+    public boolean isActive() {
+        return state.equals(PolicyState.ACTIVE);
+    }
 }

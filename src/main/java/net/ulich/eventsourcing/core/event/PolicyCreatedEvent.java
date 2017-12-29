@@ -1,20 +1,25 @@
 package net.ulich.eventsourcing.core.event;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import net.ulich.eventsourcing.api.dto.CreatePolicyRequest;
-import lombok.Getter;
 import net.ulich.eventsourcing.core.domain.Policy;
 import net.ulich.eventsourcing.core.domain.PolicyState;
 
 import java.time.LocalDate;
 
-@Getter
+@AllArgsConstructor
+@NoArgsConstructor
+@Data
 public class PolicyCreatedEvent extends PolicyEvent {
 
-    private final LocalDate coverStartDate;
-    private final int apartmentSize;
+    private LocalDate coverStartDate;
 
-    public PolicyCreatedEvent(String id, CreatePolicyRequest createRequest) {
-        super(id);
+    private int apartmentSize;
+
+    public PolicyCreatedEvent(String policyId, CreatePolicyRequest createRequest) {
+        this.policyId = policyId;
         this.coverStartDate = createRequest.getCoverStartDate();
         this.apartmentSize = createRequest.getApartmentSize();
     }
